@@ -1,26 +1,27 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* This is your central design system. 
+  By defining these here, you ensure your brand colors and fonts 
+  are exactly the same across every single page and component.
+*/
+@theme {
+  /* Link the Google Fonts from layout.tsx to Tailwind's font-sans and font-serif */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-merriweather), ui-serif, Georgia, serif;
+
+  /* Your brand colors */
+  --color-finance-green: #1A3636;
+  --color-finance-light: #F5F5F0;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base styles to ensure smooth scrolling and 
+  prevent horizontal scrolling issues on mobile devices.
+*/
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
 }
