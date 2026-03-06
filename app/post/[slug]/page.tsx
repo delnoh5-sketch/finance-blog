@@ -4,11 +4,19 @@ import { notFound } from 'next/navigation';
 import { client } from '@/sanity/lib/client';
 import { PortableText } from '@portabletext/react';
 
-// 1. Dynamic SEO Generation
-// This tells Google exactly what the article is about before the page even loads.
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export const revalidate = 30;
+
+// 1. Define the new Next.js parameter type as a Promise
+type Props = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  // 2. Await the params before using them
+  const resolvedParams = await params;
+  
   const query = `*[_type == "post" && slug.current == $slug][0] { title, excerpt }`;
-  const post = await client.fetch(query, { slug: params.slug });
+  const post = await client.fetch(query, { slug: resolvedParams.slug });
 
   if (!post) return { title: 'Post Not Found' };
 
@@ -18,9 +26,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-// 2. The Page Component
-export default async function BlogPost({ params }: { params: { slug: string } }) {
-  // Fetch the full article including the body text and author
+export default async function BlogPost({ params }: Props) {
+  // 3. Await the params here too
+  const resolvedParams = await params;
+
   const query = `*[_type == "post" && slug.current == $slug][0] {
     title,
     publishedAt,
@@ -28,9 +37,8 @@ export default async function BlogPost({ params }: { params: { slug: string } })
     body
   }`;
   
-  const post = await client.fetch(query, { slug: params.slug });
+  const post = await client.fetch(query, { slug: resolvedParams.slug });
 
-  // If someone types a bad URL, trigger the standard Next.js 404 page securely
   if (!post) {
     notFound();
   }
@@ -38,16 +46,14 @@ export default async function BlogPost({ params }: { params: { slug: string } })
   return (
     <article className="max-w-3xl mx-auto px-6 py-16">
       
-      {/* Back Button */}
       <div className="mb-10">
-        <Link href="/" className="text-sm font-semibold text-finance-green hover:underline flex items-center gap-2">
+        <Link href="/" className="text-sm font-semibold text-[var(--color-finance-green)] hover:underline flex items-center gap-2">
           &larr; Back to all articles
         </Link>
       </div>
 
-      {/* Article Header */}
       <header className="mb-12 border-b border-gray-200 pb-8 text-center">
-        <h1 className="text-4xl md:text-5xl font-serif font-bold text-finance-green leading-tight mb-6">
+        <h1 className="text-4xl md:text-5xl font-serif font-bold text-[var(--color-finance-green)] leading-tight mb-6">
           {post.title}
         </h1>
         <div className="flex items-center justify-center gap-2 text-sm text-gray-500 font-medium uppercase tracking-wider">
@@ -63,8 +69,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
         </div>
       </header>
 
-      {/* Article Content (The Tailwind Typography Magic) */}
-      <div className="prose prose-lg prose-p:text-gray-600 prose-headings:font-serif prose-headings:text-finance-green prose-a:text-blue-600 hover:prose-a:text-blue-500 mx-auto">
+      <div className="prose prose-lg prose-p:text-gray-600 prose-headings:font-serif prose-headings:text-[var(--color-finance-green)] prose-a:text-blue-600 hover:prose-a:text-blue-500 mx-auto">
         <PortableText value={post.body} />
       </div>
 
