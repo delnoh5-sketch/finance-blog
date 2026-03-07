@@ -6,6 +6,10 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+
+import { GoogleAnalytics } from '@next/third-parties/google';
+
+
 const inter = Inter({ 
   subsets: ["latin"], 
   variable: "--font-inter",
@@ -49,16 +53,21 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${merriweather.variable}`}>
       <body className="font-sans bg-finance-light text-gray-800 antialiased min-h-screen flex flex-col">
         
-        {/* 1. The Header always sits at the top */}
+       
         <Navbar />
 
-        {/* 2. The Page Content dynamically loads here */}
+        
         <main className="grow">
           {children}
         </main>
 
-        {/* 3. The Footer always sits at the bottom */}
+       
         <Footer />
+
+     
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
 
       </body>
     </html>
