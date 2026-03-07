@@ -36,8 +36,8 @@ export default function Contact() {
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-1">Email</h3>
-              <a href="mailto:hello@wealthandwisdom.com" className="text-blue-600 hover:text-blue-500 transition-colors">
-                hello@wealthandwisdom.com
+              <a href="mailto:aweolar@gmail.com" className="text-blue-600 hover:text-blue-500 transition-colors">
+                aweolar@gmail.com
               </a>
             </div>
             <div>
